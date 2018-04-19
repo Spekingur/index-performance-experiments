@@ -29,13 +29,8 @@ DBCC FREEPROCCACHE
 		INSERT INTO @temp (temp_v) -- Creates some overhead but is consistent for all
 		SELECT COUNT(UNIQUE3)
 		--FROM Wisc1000K WITH (INDEX(IX_Wisc1000Ka)) --trying to force unclustered
-		--SELECT COUNT(UNIQUE2)
 		--FROM Wisc1000K WITH (INDEX(PK_Wisc1000Ka)) --trying to force clustered
-		--SELECT COUNT(UNIQUE3)
 		FROM Wisc1000K WITH (INDEX(0)) --trying to force table scan
-		--WHERE R1 <= @value
-		--WHERE R1 < 1000000
-		--WHERE TEN_PERC < 10
 		--WHERE UNIQUE1 <= @value
 		--WHERE UNIQUE2 <= @value
 		WHERE UNIQUE3 <= @value
