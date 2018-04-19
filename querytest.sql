@@ -1,15 +1,19 @@
+-- Clean buffers; just in case
+DBCC DROPCLEANBUFFERS
+DBCC FREEPROCCACHE
+
 -- Declare variables; only once per script
 declare @startdate datetime
 declare @enddate datetime
 declare @time numeric(15,3)
 declare @run int=0
 declare @run2 int=0
-declare @value int=1000
+declare @value int=0
 
 declare @output table (r1_value INT, run INT, startdate datetime, enddate datetime, timed numeric(15,3))
 declare @temp table (temp_v INT)
 
-WHILE @run2 < 24
+WHILE @run2 < 25
 BEGIN
 -- Clean buffers; need to do it for each value
 DBCC DROPCLEANBUFFERS
@@ -21,14 +25,14 @@ DBCC FREEPROCCACHE
 		set @startdate=GETDATE()
 
 		-- Query; inserting results into a table to lower result clutter
-		INSERT INTO @temp (temp_v)
-		--SELECT COUNT(UNIQUE1)
-		--FROM Wisc1000K WITH (INDEX(IX_Wisc1000Ka)) --trying to force unclustered
+		INSERT INTO @temp (temp_v) -- Creates some overhead but is consistent for all
+		SELECT COUNT(UNIQUE3)
+		FROM Wisc1000K WITH (INDEX(IX_Wisc1000Ka)) --trying to force unclustered
 		--SELECT COUNT(UNIQUE2)
 		--FROM Wisc1000K WITH (INDEX(PK_Wisc1000Ka)) --trying to force clustered
-		SELECT COUNT(UNIQUE3)
-		FROM Wisc1000K WITH (INDEX(0)) --trying to force table scan
-		WHERE R1 < @value
+		--SELECT COUNT(UNIQUE3)
+		--FROM Wisc1000K WITH (INDEX(0)) --trying to force table scan
+		WHERE R1 <= @value
 
 		--- End time; put results into a table
 		set @enddate=GETDATE()
