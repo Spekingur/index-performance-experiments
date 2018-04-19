@@ -1,34 +1,52 @@
--- Clean buffers
-DBCC DROPCLEANBUFFERS
-DBCC FREEPROCCACHE
 
 -- Declare variables; only once per script
 declare @startdate datetime
 declare @enddate datetime
 declare @time numeric(15,3)
 declare @run int=0
+declare @run2 int=0
+declare @value int=1000
 
-declare @output table (run INT, startdate datetime, enddate datetime, timed numeric(15,3))
+declare @output table (r1_value INT, run INT, startdate datetime, enddate datetime, timed numeric(15,3))
 
-WHILE @run	< 5
+WHILE @run2 < 24
 BEGIN
-	-- Starting time
-	set @startdate=GETDATE()
+-- Clean buffers
+DBCC DROPCLEANBUFFERS
+DBCC FREEPROCCACHE
 
-	-- Query
-	SELECT COUNT(UNIQUE1)
-	from Wisc1000K
-	where ONE_PERC < 50
+	WHILE @run	< 5
+	BEGIN
+		-- Starting time
+		set @startdate=GETDATE()
 
-	--- End time; print the difference
-	set @enddate=GETDATE()
-	set @time=(CONVERT(numeric(15,8), @enddate)-CONVERT(numeric(15,8), @startdate))*(24.0*60.0*60.0)
-	--select @run, @startdate, @enddate, @time
-	INSERT into @output (run, startdate, enddate, timed)
-	VALUES (@run, @startdate, @enddate, @time)
+		-- Query
+		SELECT COUNT(UNIQUE3)
+		from Wisc1000K
+		--where ONE_PERC < 50
+		--where TWENTY_PERC < 4
+		--where R1 < 200000
+		where R1 < @value
 
-	SET @run = @run + 1
+		--- End time; print the difference
+		set @enddate=GETDATE()
+		set @time=(CONVERT(numeric(15,8), @enddate)-CONVERT(numeric(15,8), @startdate))*(24.0*60.0*60.0)
+		--select @run, @startdate, @enddate, @time
+		INSERT into @output (r1_value, run, startdate, enddate, timed)
+		VALUES (@value, @run, @startdate, @enddate, @time)
+
+		SET @run = @run + 1
+	END;
+if @value < 10000
+	SET @value = @value + 1000
+else if @value < 50000
+	SET @value = @value + 10000
+else if @value < 100000
+	SET @value = @value + 50000
+else 
+	SET @value = @value + 100000
+SET @run2 = @run2 + 1
+SET @run = 0
 END;
-
-select run, startdate, enddate, timed
+select r1_value, run, startdate, enddate, timed
 from @output
