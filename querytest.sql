@@ -22,18 +22,21 @@ DBCC FREEPROCCACHE
 
 	WHILE @run < 5
 	BEGIN
+		-- Clean buffers; need to do it for each value
+		DBCC DROPCLEANBUFFERS
+		DBCC FREEPROCCACHE
 		-- Starting time
 		set @startdate=GETDATE()
 
 		-- Query; inserting results into a table to lower result clutter
 		INSERT INTO @temp (temp_v) -- Creates some overhead but is consistent for all
 		SELECT COUNT(UNIQUE3)
-		--FROM Wisc1000K WITH (INDEX(IX_Wisc1000Ka)) --trying to force unclustered
+		FROM Wisc1000K WITH (INDEX(IX_Wisc1000Ka)) --trying to force unclustered
 		--FROM Wisc1000K WITH (INDEX(PK_Wisc1000Ka)) --trying to force clustered
-		FROM Wisc1000K WITH (INDEX(0)) --trying to force table scan
-		--WHERE UNIQUE1 <= @value
+		--FROM Wisc1000K WITH (INDEX(0)) --trying to force table scan
+		WHERE UNIQUE1 < @value
 		--WHERE UNIQUE2 <= @value
-		WHERE UNIQUE3 <= @value
+		--WHERE UNIQUE3 < @value
 
 		--- End time; put results into a table
 		set @enddate=GETDATE()
