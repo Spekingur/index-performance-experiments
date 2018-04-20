@@ -2,6 +2,7 @@ drop table if exists outputs;
 drop table if exists temps;
 drop function if exists test();
 
+-- The below is not necessary
 -- set enable_seqscan=false;
 -- set enable_seqscan=true;
 
