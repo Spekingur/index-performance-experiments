@@ -26,7 +26,8 @@ BEGIN
 			from wisc1000k
 			where unique3 <= v_value;
 			v_enddate:=NOW();
-			v_time:=(CONVERT(numeric(15,8), v_enddate)-CONVERT(numeric(15,8), v_startdate))*(24.0*60.0*60.0);
+			--v_time:=(CONVERT(numeric(15,8), v_enddate)-CONVERT(numeric(15,8), v_startdate))*(24.0*60.0*60.0);
+			v_time:=(EXTRACT(MILLISECONDS FROM v_enddate)-EXTRACT(MILLISECODS FROM v_startdate));
 			insert into outputs(r1_value, run, startdate, enddate, timed)
 			values (v_value, v_run, v_startdate, v_enddate, v_time);
 			
@@ -44,6 +45,7 @@ BEGIN
 	v_run2 := v_run2 + 1;
 	v_run := 0;
 	END LOOP;
+RETURN outputs;
 END;
 $$ LANGUAGE plpgsql;
 
