@@ -2,6 +2,9 @@ drop table if exists outputs;
 drop table if exists temps;
 drop function if exists test();
 
+-- set enable_seqscan=false;
+-- set enable_seqscan=true;
+
 create or replace function test()
 returns
 	table (r int, run int, startdate timestamp(3), enddate timestamp(3), timed numeric(15,3)) as $$
@@ -22,8 +25,10 @@ BEGIN
 			v_startdate:=clock_timestamp(); --NOW();
 			insert into temps
 			select count(unique3)
-			from wisc1000k
-			where unique3 <= v_value;
+			from wisc1000k -- can't force indexes
+			where unique1 <= v_value; -- unclustered index
+			--where unique2 <= v_value; -- clustered index
+			--where unique3 <= v_value; -- no index; may need to set enable_seqscan to false
 			v_enddate:=clock_timestamp(); --NOW();
 			--v_time:=(CONVERT(numeric(15,8), v_enddate)-CONVERT(numeric(15,8), v_startdate))*(24.0*60.0*60.0);
 			v_time:=(EXTRACT(SECONDS FROM v_enddate)-EXTRACT(SECONDS FROM v_startdate));
