@@ -19,14 +19,14 @@ BEGIN
 	LOOP
 		WHILE v_run < 5
 		LOOP
-			v_startdate:=NOW();
+			v_startdate:=clock_timestamp(); --NOW();
 			insert into temps
 			select count(unique3)
 			from wisc1000k
 			where unique3 <= v_value;
-			v_enddate:=NOW();
+			v_enddate:=clock_timestamp(); --NOW();
 			--v_time:=(CONVERT(numeric(15,8), v_enddate)-CONVERT(numeric(15,8), v_startdate))*(24.0*60.0*60.0);
-			v_time:=(EXTRACT(MILLISECONDS FROM v_enddate)-EXTRACT(MILLISECONDS FROM v_startdate));
+			v_time:=(EXTRACT(SECONDS FROM v_enddate)-EXTRACT(SECONDS FROM v_startdate));
 			insert into outputs(r1_value, run, startdate, enddate, timed)
 			values (v_value, v_run, v_startdate, v_enddate, v_time);
 			
